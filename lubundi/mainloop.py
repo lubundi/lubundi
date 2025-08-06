@@ -1,23 +1,19 @@
-from ursina import Ursina, Func
+from ursina import Ursina, window
 
 class MainLoop:
     def __init__(self, update_func=None):
-        """
-        MainLoop initializes Ursina and handles automatic frame updates.
-        :param update_func: a function to call every frame
-        """
+        # Initialize Ursina app
         self.app = Ursina()
-        self.update_func = update_func
 
-        # If an update function is provided, register it
+        # Change window title to "Lubundi"
+        window.title = "Lubundi"
+
+        # Store optional update callback
+        self.update_func = update_func
         if self.update_func:
-            # Ursina automatically calls 'update' functions; we can wrap it using Func
-            from ursina import Entity
-            class Updater(Entity):
-                def update(self_inner):
-                    self.update_func()
-            Updater()
+            from ursina import update
+            update.append(self.update_func)
 
     def run(self):
-        """Start the game loop"""
+        # Start game loop
         self.app.run()
