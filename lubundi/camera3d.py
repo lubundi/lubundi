@@ -1,20 +1,22 @@
-from ursina import Entity, mouse, Vec3
+from ursina import camera, mouse, Vec3, held_keys
 
-class Camera3D(Entity):
-    def __init__(self, player=None, mode='Default', sensitivity=0.1, **kwargs):
-        super().__init__()
+class Camera3D:
+    def __init__(self, player=None, mode='Default', sensitivity=0.2):
         self.player = player
         self.mode = mode
-        self.sensitivity = sensitivity  # Mouse drag sensitivity
+        self.sensitivity = sensitivity
         self.dragging = False
         self.drag_origin = None
-        self.position = Vec3(0, 0, 0)
-        self.rotation = Vec3(0, 0, 0)  # pitch, yaw, roll
+
+        # Camera starts at a reasonable position
+        camera.position = Vec3(0, 5, -10)
+        camera.rotation = Vec3(20, 0, 0)  # Slightly looking down
 
     def update(self):
         if self.mode == 'FocusOnPlayer' and self.player:
-            # Follow player position exactly
-            self.position = Vec3(self.player.x, self.player.y, self.player.z)
+            # Follow the player smoothly
+            camera.position = self.player.position + Vec3(0, 5, -10)
+            camera.look_at(self.player.position)
 
         elif self.mode == 'CameraIsMovable':
             if mouse.left:
@@ -25,14 +27,14 @@ class Camera3D(Entity):
                     dx = (mouse.position[0] - self.drag_origin[0]) * self.sensitivity * 100
                     dy = (mouse.position[1] - self.drag_origin[1]) * self.sensitivity * 100
 
-                    # Rotate camera based on mouse movement
-                    self.rotation.y -= dx
-                    self.rotation.x += dy
+                    camera.rotation_y -= dx
+                    camera.rotation_x += dy
                     self.drag_origin = mouse.position
             else:
                 self.dragging = False
 
         else:
-            # Default: fixed camera at origin
-            self.position = Vec3(0, 0, 0)
-            self.rotation = Vec3(0, 0, 0)
+            # Default fixed position
+            camera.position = Vec3(0, 5, -10)
+            camera.rotation = Vec3(20, 0, 0)
+
