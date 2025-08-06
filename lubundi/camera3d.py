@@ -1,4 +1,5 @@
-from ursina import camera, mouse, Vec3, held_keys
+from ursina import camera, mouse, Vec3
+from ursina.prefabs.editor_camera import EditorCamera  # Editor-style free camera
 
 class Camera3D:
     def __init__(self, player=None, mode='Default', sensitivity=0.2):
@@ -12,6 +13,17 @@ class Camera3D:
         camera.position = Vec3(0, 5, -10)
         camera.rotation = Vec3(20, 0, 0)  # Slightly looking down
 
+        self.editor_camera = None
+        if self.mode == 'CameraIsMovable':
+            self.activate_editor_camera()
+
+    def activate_editor_camera(self):
+        """Enable free movement camera like Lubundi editor"""
+        if not self.editor_camera:
+            self.editor_camera = EditorCamera()
+            self.editor_camera.position = camera.position
+            self.editor_camera.rotation = camera.rotation
+
     def update(self):
         if self.mode == 'FocusOnPlayer' and self.player:
             # Follow the player smoothly
@@ -19,22 +31,12 @@ class Camera3D:
             camera.look_at(self.player.position)
 
         elif self.mode == 'CameraIsMovable':
-            if mouse.left:
-                if not self.dragging:
-                    self.dragging = True
-                    self.drag_origin = mouse.position
-                else:
-                    dx = (mouse.position[0] - self.drag_origin[0]) * self.sensitivity * 100
-                    dy = (mouse.position[1] - self.drag_origin[1]) * self.sensitivity * 100
-
-                    camera.rotation_y -= dx
-                    camera.rotation_x += dy
-                    self.drag_origin = mouse.position
-            else:
-                self.dragging = False
+            # Make sure editor camera is active
+            if not self.editor_camera:
+                self.activate_editor_camera()
+            # EditorCamera handles movement and mouse look automatically
 
         else:
             # Default fixed position
             camera.position = Vec3(0, 5, -10)
             camera.rotation = Vec3(20, 0, 0)
-
