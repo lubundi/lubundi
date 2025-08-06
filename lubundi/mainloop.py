@@ -1,12 +1,15 @@
-from ursina import Ursina, window, Entity
+from ursina import Ursina, Entity, window
+from panda3d.core import WindowProperties
 
 class MainLoop:
     def __init__(self, update_func=None):
         # Initialize Ursina app
         self.app = Ursina()
-        
-        # Force the window title to "Lubundi"
-        window.title = "Lubundi"
+
+        # Force the window title via Panda3D
+        wp = WindowProperties()
+        wp.setTitle("Lubundi")
+        window._set_window_properties(wp)
 
         # Attach update function if provided
         self.update_func = update_func
