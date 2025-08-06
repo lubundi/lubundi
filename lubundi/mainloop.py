@@ -1,16 +1,17 @@
-from ursina import Ursina, window, Func
+from ursina import Ursina, window, Entity
 
 class MainLoop:
     def __init__(self, update_func=None):
+        # Initialize Ursina app
         self.app = Ursina()
-        window.title = "Lubundi"  # Set Lubundi title
-        self.update_func = update_func
+        
+        # Force the window title to "Lubundi"
+        window.title = "Lubundi"
 
-        # Attach the update function via Ursina's global update
+        # Attach update function if provided
+        self.update_func = update_func
         if self.update_func:
-            # Ursina calls update functions automatically every frame if they're global
-            # We'll create a small Entity just to call our function every frame
-            from ursina import Entity
+            # Dummy entity whose update method calls the function every frame
             self.updater = Entity()
             self.updater.update = self.update_func
 
