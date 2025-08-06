@@ -12,7 +12,7 @@ class MainLoop:
         # Build dynamic title
         os_info = platform.system() + " " + platform.release()
         python_info = f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
-        title = f"Lubundi on {os_info} and {python_info}"
+        title = f"lubundi v2 on {os_info} and {python_info}"
 
         # Force the window title via Panda3D
         if application.base.win:
