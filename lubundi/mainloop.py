@@ -1,16 +1,23 @@
-from ursina import Ursina, Entity
+import platform
+import sys
+from ursina import Ursina, Entity, application
+
 from panda3d.core import WindowProperties
-from ursina import window, application
 
 class MainLoop:
     def __init__(self, update_func=None):
         # Initialize Ursina app
         self.app = Ursina()
 
-        # Force the window title via Panda3D after window is created
-        if application.base.win:  # ensure Panda3D window exists
+        # Build dynamic title
+        os_info = platform.system() + " " + platform.release()
+        python_info = f"Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+        title = f"Lubundi on {os_info} and {python_info}"
+
+        # Force the window title via Panda3D
+        if application.base.win:
             wp = WindowProperties()
-            wp.setTitle("Lubundi")
+            wp.setTitle(title)
             application.base.win.requestProperties(wp)
 
         # Attach update function if provided
